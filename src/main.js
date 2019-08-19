@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const dbConfig = require('../db/db');
 const storyRoute = require('./stories.route');
+const webhookRoute = require('./webhook.route');
 const authMiddleware = require('./auth.middleware');
 
 const app = express();
@@ -28,6 +29,7 @@ app.use(bodyParser.urlencoded({
 app.use(express.static(FRONTPATH));
 app.use('/', express.static(FRONTPATH));
 app.use('/api', authMiddleware.checkToken, storyRoute);
+app.use('/webhook', webhookRoute);
 
 app.post('/verifyPIN', (req, res) => {
   const submittedPin = req.body.pin;
