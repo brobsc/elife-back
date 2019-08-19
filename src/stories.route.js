@@ -53,11 +53,12 @@ storyRoute.route('/:id').put((req, res, next) => {
 
 // Delete employee
 storyRoute.route('/:id').delete((req, res, next) => {
-  Story.findByIdAndDelete(req.params.id, (error, _) => {
+  Story.findByIdAndDelete(req.params.id, (error, data) => {
     if (error) {
       next(error);
     } else {
-      res.status(204);
+      res.status(204)
+        .json(data);
     }
   });
 });
