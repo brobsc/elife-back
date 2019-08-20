@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -14,7 +15,7 @@ const app = express();
 
 const PIN = process.env.PIN || '123456';
 const PORT = process.env.PORT || 4000;
-const FRONTPATH = process.env.FRONTPATH || '/Users/bruno/elife-news/front/dist/';
+const FRONTPATH = process.env.FRONTPATH;
 
 mongoose.Promise = global.Promise;
 mongoose.connect(dbConfig.db, {
@@ -29,10 +30,8 @@ app.use(bodyParser.urlencoded({
   extended: false,
 }));
 app.use(express.static(FRONTPATH));
-app.use('/', express.static(FRONTPATH));
 app.use('/api', authMiddleware.checkToken, storyRoute);
 app.use('/webhook', webhookRoute);
-
 app.post('/verifyPIN', (req, res) => {
   const submittedPin = req.body.pin;
 
@@ -44,5 +43,7 @@ app.post('/verifyPIN', (req, res) => {
       .json({ msg: 'Bad PIN' });
   }
 });
+app.use('/', (req, res) => res.sendFile(path.resolve(FRONTPATH, 'index.html')));
+
 
 app.listen(PORT, () => console.log(`Listening at http://localhost:${PORT}`));
